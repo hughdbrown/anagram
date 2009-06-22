@@ -1,6 +1,7 @@
 from __future__ import with_statement
 import collections
 
+# Create 10-letter keys made up of every permutation of mnemonics
 def create_key (lettersets, sofar) :
     if len(lettersets) == 0 :
         yield sofar
@@ -11,51 +12,40 @@ def create_key (lettersets, sofar) :
                 yield key
     return
 
-def create_mnemonic_candidates():    
-    mnemonics = [ "IM", "E", "SCN", "EGI", "CH", "E", "S", "T", "F", "T" ]
+# Create a defaultdict(list) from an iterator
+def defaultdict(iter):
     d = collections.defaultdict(list)
-    for key in create_key(mnemonics, ""):
-        sorted_key = "".join(sorted(key))
-        d[sorted_key].append(key)
+    for key in iter:
+        d["".join(sorted(key))].append(key)
     return d
 
+def create_mnemonic_candidates():    
+    mnemonics = [ "IM", "E", "SCN", "EGI", "CH", "E", "S", "T", "F", "T" ]
+    return defaultdict(create_key(mnemonics, ""))
+
 def create_word_candidates(word_len):
+    if not (type(word_len) == list or type(word_len) == tuple):
+        word_len = [ word_len ]
     filename = r'g:\words\words(3).txt'
     with open(filename) as f:
-        candidates = [ str.strip() for str in f.readlines() if len(str.strip()) == word_len]
-    
-    w = collections.defaultdict(list)
-    for c in candidates:
-        key = c.upper()
-        sorted_key = "".join(sorted(key))
-        w[sorted_key].append(key)
-    return w
+        candidates = [ str.strip().upper() for str in f.readlines() if len(str.strip()) in word_len]    
+    return defaultdict(candidates)
 
-def create_word_candidates2(word_lens):
-    filename = r'g:\words\words(3).txt'
-    with open(filename) as f:
-        candidates = [ str.strip() for str in f.readlines() if len(str.strip()) in word_lens]
-    
-    w = collections.defaultdict(list)
-    for c in candidates:
-        key = c.upper()
-        sorted_key = "".join(sorted(key))
-        w[sorted_key].append(key)
-    return w
-
+# Create a defaultdict(int) from a string
 def create_collections_dict(key):
     dk = collections.defaultdict(int)
     for k in key:
         dk[k] += 1
     return dk
 
+# Score the similarity of a defaultdict(int) against a string (which is temporarily converted to a defaultdict(int))
 def score(dk, cand) :
     dc = create_collections_dict(cand)
     return sum(min(dk[k], dc[k]) for k in dk.keys() if k in dc)
-    
+
+# Make a key composed of 'long_key' keys with all repeated occurrences of 'short_key' keys removed
 def diff(long_key, short_key) :
     ld = create_collections_dict(long_key)
     sd = create_collections_dict(short_key)
     s = [ (k * (ld[k] - (sd[k] if k in sd else 0))) for k in ld.keys() ]
     return "".join(sorted(s))
-

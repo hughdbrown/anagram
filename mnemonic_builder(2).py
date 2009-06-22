@@ -1,3 +1,9 @@
+try:
+    import psyco
+    psyco.full()
+except ImportError:
+    pass
+
 from mnemonic_util import *
 
 if __name__ == "__main__" :
@@ -5,7 +11,7 @@ if __name__ == "__main__" :
     SECOND_FIT = 10 - FIRST_FIT
     wordlens = (FIRST_FIT, SECOND_FIT)
     d = create_mnemonic_candidates()
-    w = create_word_candidates2(wordlens)
+    w = create_word_candidates(wordlens)
     
     for k in d.keys() :
         dk = create_collections_dict(k)

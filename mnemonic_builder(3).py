@@ -1,3 +1,9 @@
+try:
+    import psyco
+    psyco.full()
+except ImportError:
+    pass
+
 from mnemonic_util import *
 
 if __name__ == "__main__" :
