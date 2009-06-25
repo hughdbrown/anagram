@@ -9,7 +9,7 @@ from mnemonic_util import *
 if __name__ == "__main__" :
     d = create_mnemonic_candidates()
     w = create_word_candidates(7)
-    the = "EHT"    
+    the = sorted("THE")
     for k in d.keys() :
         dk = create_collections_dict(k)
         if score(dk, the) == 3:

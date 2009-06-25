@@ -15,7 +15,6 @@ if __name__ == "__main__" :
     
     for k in d.keys() :
         dk = create_collections_dict(k)
-        sk = set(k)
         for kk in w.keys():
             x = score(dk, kk)
             if x == FIRST_FIT :
